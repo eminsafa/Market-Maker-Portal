@@ -4,16 +4,7 @@
     <option name="SCOPE_TYPE" value="3" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="16ee92ff-76ec-450f-ba5f-49fea613573e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/liquidminers/integrations/threads/statistic_controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/liquidminers/integrations/thread_factory.py" beforeDir="false" afterPath="$PROJECT_DIR$/liquidminers/integrations/thread_factory.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/liquidminers/models/statistic.py" beforeDir="false" afterPath="$PROJECT_DIR$/liquidminers/models/statistic.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/liquidminers/views/new_bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/liquidminers/views/new_bot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/liquidminers/views/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/liquidminers/views/test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/pages/new_bot.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/pages/new_bot.html" afterDir="false" />
-    </list>
+    <list default="true" id="16ee92ff-76ec-450f-ba5f-49fea613573e" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -178,7 +169,7 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="exceleditor.install" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/liquidminers/integrations/threads" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
@@ -319,6 +310,7 @@
       <workItem from="1649348261679" duration="147000" />
       <workItem from="1649348518244" duration="8396000" />
       <workItem from="1649765742270" duration="5652000" />
+      <workItem from="1653912153840" duration="514000" />
     </task>
     <task id="LOCAL-00001" summary="dockerfile">
       <created>1638386543994</created>
@@ -402,36 +394,6 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/liquidminers/integrations/exchanges/gateio.py</url>
-          <line>211</line>
-          <option name="timeStamp" value="34" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/liquidminers/integrations/exchanges/gateio.py</url>
-          <line>212</line>
-          <option name="timeStamp" value="35" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/liquidminers/integrations/exchanges/gateio.py</url>
-          <line>213</line>
-          <option name="timeStamp" value="36" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/liquidminers/integrations/exchanges/gateio.py</url>
-          <line>210</line>
-          <option name="timeStamp" value="37" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/liquidminers/integrations/exchanges/gateio.py</url>
-          <line>214</line>
-          <option name="timeStamp" value="39" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/liquidminers/integrations/exchanges/gateio.py</url>
-          <line>215</line>
-          <option name="timeStamp" value="40" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/liquidminers/views/settings.py</url>
           <line>36</line>
           <option name="timeStamp" value="41" />
@@ -490,11 +452,6 @@
           <url>file://$PROJECT_DIR$/liquidminers/integrations/price_factory.py</url>
           <line>38</line>
           <option name="timeStamp" value="82" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/liquidminers/views/admin_dashboard.py</url>
-          <line>84</line>
-          <option name="timeStamp" value="131" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/liquidminers/integrations/threads/order_controller.py</url>
