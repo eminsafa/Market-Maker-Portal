@@ -1,0 +1,26 @@
+<table class="table table-centered table-nowrap mb-4 rounded table-striped table-hover">
+    <thead class="thead-light">
+        <tr>
+            <th class="border-0">Start</th>
+            <th class="border-0">End</th>
+            <th class="border-0">Reward Achieved</th>
+            <th class="border-0">Transaction Status</th>
+            <th class="border-0">Wallet Address</th>
+        </tr>
+    </thead>
+    <tbody>
+    <!-- Item -->
+    {% for r in earnings %}
+        <tr>
+            <td class="border-0">{{ r.start }}</td>
+            <td class="border-0">{{ r.end }}</td>
+            <td class="border-0">{{ r.reward_achieved }} {{ r.currency }}</td>
+            <td class="border-0 text-{{ r.transaction_style }}">{{ r.transaction_status }}</td>
+            <td class="border-0">{{ r.wallet_address }}</td>
+        </tr>
+
+    {% endfor %}
+
+    <!-- End of Item -->
+    </tbody>
+</table>

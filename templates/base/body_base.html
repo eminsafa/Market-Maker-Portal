@@ -1,0 +1,97 @@
+{% extends "base/core_base.html" %}
+{% load static %}
+{% block body_content %}
+    <!-- header start -->
+    <div id="header-wrap">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'home' %}"><img width="132" height="100" src="{% static 'assets/img/logo/LiquidMinersLogo.png' %}" alt="LOGO"></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-lg-end" id="navbarSupportedContent">
+                    <ul class="navbar-nav">
+                        {% if user.is_authenticated %}
+                            {% if is_admin %}
+                                <li class="nav-item d-none">
+                                    <a class="nav-link {% if active_page == 'admin_dashboard' %}active{% endif %}" aria-current="page" href="{% url 'admin_dashboard' %}">Admin Panel</a>
+                                </li>
+                            {% endif %}
+                            <li class="nav-item">
+                                <a class="nav-link {% if active_page == 'manager' %}active{% endif %}" aria-current="page" href="{% url 'stats' %}">Stats</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link {% if active_page == 'markets' %}active{% endif %}" aria-current="page" href="{% url 'markets' %}">Pools</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if active_page == 'settings' %}active{% endif %}" aria-current="page" href="{% url 'settings' %}">Settings</a>
+                            </li>
+                            <li>
+                                <div class="dropdown">
+                                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                        {{ user.email }} <img src="{% static 'assets/img/icon-arrow-down.svg' %}" alt="v">
+                                    </a>
+
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                        <li class="text-right"><a class="dropdown-item" href="{% url 'logout' %}">Log out</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link {% if active_page == 'home' %}active{% endif %}" aria-current="page" href="/home">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="https://liquidminers.notion.site/How-it-works-681c5b340d5c4ce784c62f57bd522e7f" target="_blank">How to start</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="https://liquidminers.notion.site/Wiki-52282b379ffe4cc7ba59fcd529a95901" target="_blank">Wiki</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="https://liquidminers.notion.site/FAQs-30fcd11d69034d5c858c351fac2888ba" target="_blank">FAQs</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-login {% if active_page == 'login' %}active{% endif %}" href="/login">Log in</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-signup {% if active_page == 'register' %}active{% endif %}" href="{% url 'register' %}">Sign up</a>
+                            </li>
+                        {% endif %}
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <main>
+        {% block page_content %}{% endblock %}
+    </main>
+    <div class="footer-wrap">
+    <div class="container">
+        <div class="footer-main">
+            <div class="row align-items-center">
+                <div class="col-md-6 col-lg-4">
+                    <div class="footer-logo">
+                        <a href="#"><img src="{% static 'assets/img/logo/LiquidMinersLogoWhite.png' %}" alt="LOGO" style="max-width: 130px;"></a>
+                    </div>
+                </div>
+                <div class="order-lg-2 col-xl-4 col-lg-5 col-md-6">
+                    <div class="footer-links">
+                        <ul>
+                            <li><a href="https://www.notion.so/liquidminers/Wiki-52282b379ffe4cc7ba59fcd529a95901" target="_blank">Wiki</a></li>
+                            <li><a href="https://liquidminers.notion.site/Terms-of-Use-94f7c522deb44c839997a3d92b7e8952" target="_blank">Terms of use</a></li>
+                            <li><a href="https://liquidminers.notion.site/Privacy-Policy-bb60298f8e9848ae95a80074459e4602" target="_blank">Privacy policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="order-lg-1 col-md-12 col-xl-4 col-lg-3">
+                    <div class="footer-copyright">
+                        <p>©  2021 Liquid  Miners</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

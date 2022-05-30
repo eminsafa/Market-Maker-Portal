@@ -1,0 +1,80 @@
+{% extends "base/body_base.html" %}
+{% load static %}
+
+{% block title %}Register | Trade Dashboard{% endblock %}
+
+{% block body_content %}
+
+
+<!-- Container Fluid start -->
+<div id="container-fluid" class="login-fluid">
+<!-- header start -->
+<div id="header-wrap">
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/"><img width="132" src="{% static 'assets/img/logo.svg' %}" alt="LOGO"></a>
+        </div>
+    </nav>
+</div>
+<!-- header end -->
+
+<!-- Signup start -->
+<main class="signup-wrap">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">    
+                <div class="signup-form liquid-form">
+                    <h2>Create an account</h2>
+                    {% include 'components/alert_box.html' %}
+                    <!-- Form -->
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="id_email">Email</label>
+                            <div class="input-group">
+                                <input type="email" class="form-control" id="id_email" autofocus="" required="" maxlength="254" name="email">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_password1">Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="id_password1" name="password1" required="">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="id_password2">Confirm Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="id_password2" name="password2" required="">
+                            </div>
+                        </div>
+                        
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="terms" required="">
+                            <label class="form-check-label" for="terms">
+                                I agree to the <a href="#">terms and conditions</a>
+                            </label>
+                        </div>
+                        
+                        <div class="liquid-form-btn">
+                            <button type="submit" class="btn btn-primary">Sign up</button>
+                        </div>
+                        <div class="back-registered"><em>or</em><span>Already have an account? <a href="{% url 'login' %}">Login</a> here</span></div>
+                    </form>
+                    <!-- End of Form -->
+                </div>
+            </div>
+            <div class="d-none d-lg-block col-lg-6">
+                <div class="login-right">
+                    <img src="{% static 'assets/img/banner-img.png' %}" alt="PIC">
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- Login end -->
+
+</div>
+<!-- Container Fluid end -->
+
+{% endblock %}

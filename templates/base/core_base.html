@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'assets/img/logo/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'assets/img/logo/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'assets/img/logo/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'assets/img/logo/site.webmanifest' %}">
+    <!-- Primary Meta Tags -->
+    <title>{{ title }} | Market Maker Monetum Exchange</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Monetum Exchange">
+    <meta name="description" content="Monetum Exchange Market Maker Reward Pool Sharing Application">
+    <link rel="shortcut icon" type="image/png" href="{% static 'assets/img/brand/logo.png' %}">
+    <!-- Fontawesome -->
+    <link type="text/css" href="{% static 'vendor/@fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+    <!-- Notyf -->
+    <link type="text/css" href="{% static 'vendor/notyf/notyf.min.css' %}" rel="stylesheet">
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <link type="text/css" href="{% static 'css/theme.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'css/main.css' %}" rel="stylesheet">
+    {% block extra_css %}{% endblock extra_css %}
+    <script type="text/javascript" charset="utf8" src="/static/assets/js/simple-datatables.js"></script>
+</head>
+
+<body>
+    
+
+<div id="active-page-data-container" data-active-page="{{ active_page }}"></div>
+
+{% block body_content %}{% endblock %}
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+<script language="javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.22/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<!-- Core -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js" integrity="sha384-cn7l7gDp0eyniUwwAZgrzD06kc/tftFf19TOAs2zVinnD/C7E91j9yyk5//jjpt/" crossorigin="anonymous"></script>
+
+<!-- Slider -->
+<script src="{% static 'vendor/nouislider/distribute/nouislider.min.js' %}"></script>
+
+<!-- Smooth scroll -->
+<script src="{% static 'vendor/smooth-scroll/dist/smooth-scroll.polyfills.min.js' %}"></script>
+
+<!-- Count up -->
+<script src="{% static 'vendor/countup.js/dist/countUp.umd.js' %}"></script>
+
+<!-- Notyf -->
+<script src="{% static 'vendor/notyf/notyf.min.js' %}"></script>
+
+<!-- Datepicker -->
+<script src="{% static 'vendor/vanillajs-datepicker/dist/js/datepicker.min.js' %}"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.1.4/dist/js/datepicker.min.js"></script>-->
+
+<!-- Simplebar -->
+<script src="{% static 'vendor/simplebar/dist/simplebar.min.js' %}"></script>
+
+<!-- Theme JS -->
+<script src="{% static 'assets/js/theme.js' %}"></script>
+
+<script src="{% static 'assets/js/main.js' %}"></script>
+
+<script src="{% static 'assets/js/market_maker.js' %}"></script>
+
+{% block extra_js %}{% endblock extra_js %}
+</body>
+
+</html>
+

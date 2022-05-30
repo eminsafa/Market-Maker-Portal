@@ -1,0 +1,28 @@
+<table class="table table-centered table-nowrap mb-4 rounded table-striped table-hover">
+    <thead class="thead-light">
+    <tr>
+        <th class="border-0">E-Mail</th>
+        <th class="border-0">Invested (Base)</th>
+        <th class="border-0">Invested (Quote)</th>
+        <th class="border-0">Total Value</th>
+        <th class="border-0">Spread</th>
+        <th class="border-0">Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Item -->
+    {% for i in investments %}
+        <tr>
+            <td class="border-0">{{ i.user.email }}</td>
+            <td class="border-0"><b>{{ i.coin_amount }}</b></td>
+            <td class="border-0">{{ i.fiat_amount }}</td>
+            <td class="border-0 font-weight-bold">$ {{ i.total_value }}</td>
+            <td class="border-0">{{ i.minimum_spread }}</td>
+            <td class="border-0">{{ i.created_at }}</td>
+        </tr>
+
+    {% endfor %}
+
+    <!-- End of Item -->
+    </tbody>
+</table>

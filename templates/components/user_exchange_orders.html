@@ -1,0 +1,28 @@
+{% load static %}
+
+<table class="table table-centered table-nowrap mb-0 rounded">
+    <thead class="thead-light">
+    <tr>
+        <th class="border-0 rounded-start">Order ID</th>
+        <th class="border-0">Side</th>
+        <th class="border-0">Price</th>
+        <th class="border-0">Amount</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for i in order %}
+
+        <tr>
+            <td class="border-0">
+                <span class="d-flex align-items-center">
+                    <img class="me-2 mr-1 image image-small rounded-circle" alt="Image placeholder" src="{% static '/assets/img/cryptoicons'%}/{{ i.coin_icon }}.png">
+                    <div><span>{{ i.id }}</span></div>
+                </span>
+            </td>
+            <td class="border-0 fw-bold text-{% if i.type == 'Buy' %}success{% else %}danger{% endif %}">{{ i.type }}</td>
+            <td class="border-0 fw-bold">{{ i.price }} <b>{{ i.fiat }}</b></td>
+            <td class="border-0 fw-bold">{{ i.amount }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

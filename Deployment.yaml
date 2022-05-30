@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: liquidminers-app
+  labels:
+    app: liquidminers
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: liquidminers
+  template:
+    metadata:
+      labels:
+        app: liquidminers
+    spec:
+      containers:
+        - image: registry.digitalocean.com/liquid-miners/hello-world:17
+          name: liquidminers
+          ports:
+            - containerPort: 8000
+              name: gunicorn
+      imagePullSecrets:
+        - name: liquid-miners

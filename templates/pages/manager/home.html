@@ -1,0 +1,57 @@
+{% extends "base/body_base.html" %}
+{% load static %}
+
+{% block page_content %}
+
+<div class="bot-wrap" style="background-color: #F2F7FD;">
+    <div class="container">
+        <div class="bot-top-bar">
+            <div class="row flex-md-row-reverse">
+            {% include 'components/alert_box.html' %}
+                <div class="col-md-3 col-lg-5">
+                    <form method="get">
+                        {% csrf_token %}
+                        <label>
+                            <select class="form-control" name="duration">
+                                <option value="7">1 week</option>
+                                <option value="10">10 days</option>
+                                <option value="14">2 weeks</option>
+                                <option value="21">3 weeks</option>
+                                <option value="30">1 month</option>
+                                <option value="180">6 months</option>
+                            </select>
+                        </label>
+                        <label>
+                            <select class="form-control" name="period">
+                                <option value="1">Daily</option>
+                                <option value="7">Weekly</option>
+                                <option value="30">Monthly</option>
+                            </select>
+                        </label>
+                        <input class="form-control" type="submit" value="Update">
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="bot-main-section">
+            <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+            <div class="row mb-4">
+                <div class="col-6">
+                    {% include 'components/charts/volume_chart.html' %}
+                </div>
+                <div class="col-6">
+                    {% include 'components/charts/liquidity_chart.html' %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    {% include 'components/charts/bot_count_chart.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

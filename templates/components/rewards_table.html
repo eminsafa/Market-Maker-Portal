@@ -1,0 +1,86 @@
+{% load static %}
+
+<table class="table table-centered table-nowrap mb-4 rounded table-striped table-hover">
+    <thead class="thead-light">
+    <tr>
+        <th class="border-0">Pair</th>
+        <th class="border-0">Bots</th>
+        <th class="border-0">Due Date</th>
+        <th class="border-0">Exchange</th>
+        <th class="border-0">Reward</th>
+        <th class="border-0">Trades</th>
+        {% if not user.is_authenticated %}
+            {% if not is_admin %}
+            <!-- <th class="border-0"></th> -->
+            {% endif %}
+            {% else %}
+            <th class="border-0">Status</th>
+        {% endif %}
+        <th class="border-0">TVL (Total Value Locked)</th>
+        <th class="border-0">Percentage Yield (%)</th>
+        {% if not user.is_authenticated %}
+            {% if not is_admin %}
+            <th class="border-0"></th>
+            {% endif %}
+            {% else %}
+            <th class="border-0">Action</th>
+        {% endif %}
+        
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Item -->
+    {% for r in rewards %}
+        <tr>
+            <td class="border-0 font-weight-bold">
+                <span class="d-flex align-items-center">
+                    <img class="me-2 mr-0 image image-small rounded-circle" alt="Image placeholder" src="{% static '/assets/img/cryptoicons'%}/{{ r.buy_side_icon }}.png">
+                    <img class="me-2 mr-0 image image-small rounded-circle" alt="Image placeholder" src="{% static '/assets/img/cryptoicons'%}/{{ r.sell_side_icon }}.png">
+                </span>
+                <b>{{ r.pair }}</b>
+            </td>
+            <td class="border-0">{{ r.investors }}</td>
+            <td class="border-0">
+                <span href="#" class="d-flex align-items-center">
+                    {{ r.end_date }}
+                </span>
+                <small>23:59</small>
+                <div class="d-none" id="reward-date-{{ r.id }}" data-date-year="{{ r.end_date_year }}" data-date-month="{{ r.end_date_month }}" data-date-day="{{ r.end_date_day }}"></div>
+            </td>
+            <th class="border-0">Monetum</th>
+            <td class="border-0 font-weight-bold">{{ r.amount }}</td>
+            <td class="border-0">{{ r.trades }}</td>
+            {% if not user.is_authenticated %}
+            {% if not is_admin %}
+            {% endif %}
+            {% else %}
+            <td class="border-0 text-{{ r.status_style }}">{{ r.status }}</td>
+            {% endif %}
+            <td class="border-0 font-weight-bold">{{ r.investments }}</td>
+            <td class="border-0 font-weight-bold">{{ r.percentage_yield }}</td>
+            <td class="border-0">
+                {% if user.is_authenticated %}
+                    {% if not is_admin %}
+                        {% if r.user_investment %}
+                            <button class="btn btn-sm btn-pill btn-outline-gray-500 btn-lg btn-block" disabled=""><i class="far fa-donate mr-1"></i>Invest</button>
+                            <b>Invested: </b>{{ r.user_investment }}<br><a href="{% url 'investment_details' %}?reward_id={{ r.id }}"><small>{{ r.action_text }}</small></a>
+                        {% else %}
+                            <a href="{% url 'new_investment' %}?reward_id={{ r.id }}" class="btn btn-sm btn-pill btn-outline-success btn-lg btn-block"><i class="far fa-donate mr-1"></i>Invest</a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'admin_reward_details' %}?reward_id={{ r.id }}" class="btn btn-sm btn-pill btn-outline-success btn-lg btn-block"><i class="far fa-file-alt mr-1"></i>Details</a>
+                    {% endif %}
+                {% endif %}
+            {% if not user.is_authenticated %}
+                {% if not is_admin %}
+                {% endif %}
+            {% endif %}
+            {% if is_admin %}
+                <a href="{% url 'reward_details' %}?reward_id={{ r.id }}" class="btn btn-sm btn-pill btn-outline-success btn-lg btn-block"><i class="far fa-donate mr-1"></i>Details</a>
+            {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    <!-- End of Item -->
+    </tbody>
+</table>

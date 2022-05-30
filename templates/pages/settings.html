@@ -1,0 +1,193 @@
+{% extends "base/body_base.html" %}
+{% block page_content %}
+
+
+    <div class="bg-bl">
+        <div class="settings-box-wrap">
+            <div class="container">
+                {% include 'components/alert_box.html' %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="settings-box settings-box-left">
+                            <select class="form-select" name="" id="exchange-selector">
+                                <option value="monetum">Monetum</option>
+                                <option value="gateio">Gateio</option>
+                                <option value="binance" disabled>Binance</option>
+                                <option value="kucoin" disabled>Kucoin</option>
+                            </select>
+                            <h4 class="lead">API keys</h4>
+                            <p>Enter your Exchange API credentials. This information is required to use Market Campaigns ©.</p>
+                            <div id="exchange-containers">
+                                <div class="exchange-container" id="monetum-container">
+                                    <form method="post" action="/settings/">
+                                        {% csrf_token %}
+                                        <input type="text" class="form-control" id="exchange-name" name="exchange-name" value="monetum" style="display: none;">
+                                        <div class="form-field">
+                                            <label for="apipublickey" class="form-label">api public key</label>
+                                            <input type="text" class="form-control" id="apipublickey" name="api_public_key" value="{{ monetum_public_key }}">
+                                        </div>
+                                        <div class="form-field">
+                                            <label for="apiprivatekey" class="form-label">api private key</label>
+                                            <input type="password" class="form-control" id="apiprivatekey" name="api_private_key" value="{{ monetum_private_key }}">
+                                        </div>
+                                        <div class="form-btn">
+                                            <button type="submit" class="btn btn-primary btn-modified">Save</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="exchange-container" id="gateio-container" style="display: none">
+                                    <p class="text text-info">Please use APIv4 credentials on your Gate.io account. You also need to give "Spot/Margin Trade" and "Wallet" <b>permissions</b> to your API keys.</p>
+                                    <form method="post" action="/settings/">
+                                        {% csrf_token %}
+                                        <input type="text" class="form-control" id="exchange-name" name="exchange-name" value="gateio" style="display: none;">
+                                        <div class="form-field">
+                                            <label for="apipublickey" class="form-label">api key</label>
+                                            <input type="text" class="form-control" id="apipublickey" name="api_public_key" value="{{ gateio_public_key }}">
+                                        </div>
+                                        <div class="form-field">
+                                            <label for="apiprivatekey" class="form-label">api Secret Key</label>
+                                            <input type="password" class="form-control" id="apiprivatekey" name="api_private_key" value="{{ gateio_private_key }}">
+                                        </div>
+                                        <div class="form-btn">
+                                            <button type="submit" class="btn btn-primary btn-modified">Save</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="exchange-container" id="binance-container" style="display: none">
+                                    <form method="post" action="/settings/">
+                                        {% csrf_token %}
+                                        <input type="text" class="form-control" id="exchange-name" name="exchange-name" value="binance" style="display: none;">
+                                        <div class="form-field">
+                                            <label for="apipublickey" class="form-label">api public key</label>
+                                            <input type="text" class="form-control" id="apipublickey" name="api_public_key" value="{{ api_public_key }}">
+                                        </div>
+                                        <div class="form-field">
+                                            <label for="apiprivatekey" class="form-label">api private key</label>
+                                            <input type="password" class="form-control" id="apiprivatekey" name="api_private_key" value="{{ api_private_key }}">
+                                        </div>
+                                        <div class="form-btn">
+                                            <button type="submit" class="btn btn-primary btn-modified">Save</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="exchange-container" id="kucoin-container" style="display: none">
+                                    <form method="post" action="/settings/">
+                                        {% csrf_token %}
+                                        <input type="text" class="form-control" id="exchange-name" name="exchange-name" value="kucoin" style="display: none;">
+                                        <div class="form-field">
+                                            <label for="apipublickey" class="form-label">api public key</label>
+                                            <input type="text" class="form-control" id="apipublickey" name="api_public_key" value="{{ api_public_key }}">
+                                        </div>
+                                        <div class="form-field">
+                                            <label for="apiprivatekey" class="form-label">api private key</label>
+                                            <input type="password" class="form-control" id="apiprivatekey" name="api_private_key" value="{{ api_private_key }}">
+                                        </div>
+                                        <div class="form-btn">
+                                            <button type="submit" class="btn btn-primary btn-modified">Save</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="settings-box settings-box-right">
+                            <h4 class="lead">Update password</h4>
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="form-field">
+                                    <label for="currentpassword" class="form-label">current password</label>
+                                    <input type="password" class="form-control" id="currentpassword" name="old_password">
+                                </div>
+                                <div class="form-field">
+                                    <label for="newpassword" class="form-label">new password</label>
+                                    <input type="password" class="form-control" id="newpassword" name="new_password1">
+                                </div>
+                                <div class="form-field">
+                                    <label for="confirmnewpassword" class="form-label">confirm new password</label>
+                                    <input type="password" class="form-control" id="confirmnewpassword" name="new_password2">
+                                </div>
+                                <div class="form-btn">
+                                    <button type="submit" class="btn btn-primary btn-modified">Save
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    {% if is_admin %}
+                        <div class="col-md-6 mt-4">
+                            <div class="settings-box settings-box-right">
+                                <div class="card border-0 text-center p-0">
+                                    <div class="card-body pb-5">
+                                        <h2 class="h2 mb-3">System Settings</h2>
+                                        <div class="mb-3">
+                                            <h3 class="h5 mb-2">Trade Engine</h3>
+                                            <span><b>Status: </b></span><span class="text-{{ trade_engine_status_style }}">{{ trade_engine_status }}</span><br><br>
+                                            <a href="?trade-engine={{ trade_engine_btn }}">
+                                                <button class="btn btn-sm btn-primary">Turn {{ trade_engine_btn }}</button>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="availablepools-wrap setting-refferal-wrap">
+            <div class="container">
+                <div class="setting-refferal-main availablepools-main">
+                    <div class="settings-info-outer">
+                        <div class="row">
+                            <div class="col-6 col-md-3">
+                                <div class="settings-info-box">Your refferal code<strong>3df023p</strong></div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="settings-info-box">Total refferals<strong>2</strong></div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="settings-info-box">Your role<strong>Miner</strong></div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="settings-info-box">Your refferal gains<strong>$ 2313,29</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="settings-info-bar">
+                        <div class="settings-info-box">Your refferal gains address<strong>302dlxkd02894lsldsldls</strong>
+                            <button type="button" class="btn btn-primary btn-modified" data-bs-toggle="modal" data-bs-target="#referralModal">Edit</button>
+                        </div>
+                    </div>
+                    <div class="setting-refferal-table">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th>Email <em></em></th>
+                                <th>Join Date <em></em></th>
+                                <th>Number refferals <em></em></th>
+                                <th>role <em></em></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td><b>Email <em></em></b>sdf@dsd</td>
+                                <td><b>Join Date <em></em></b>18/08/21</td>
+                                <td><b>Number refferals <em></em></b>2</td>
+                                <td><b>role <em></em></b>Miner</td>
+                            </tr>
+                            <tr>
+                                <td><b>Email <em></em></b>dslk@sdlsd</td>
+                                <td><b>Join Date <em></em></b>18/08/21</td>
+                                <td><b>Number refferals <em></em></b>5</td>
+                                <td><b>role <em></em></b>Team lead</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

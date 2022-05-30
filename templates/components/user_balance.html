@@ -1,0 +1,25 @@
+<div class="overflow-auto">
+    <table class="table table-centered table-nowrap mb-0 rounded overflow-auto">
+        <thead class="thead-light">
+        <tr>
+            <th class="border-0 rounded-start">Asset</th>
+            <th class="border-0">Free Balance</th>
+            <th class="border-0">Total Balance</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for i in balance %}
+            <tr>
+                <td class="border-0">
+                    <span class="d-flex align-items-center">
+                        <img class="me-2 mr-1 image image-small rounded-circle" alt="Image placeholder" src="/static/assets/img/cryptoicons/{{ i.icon }}.png">
+                        <div><span class="h6">{{ i.name }}</span></div>
+                    </span>
+                </td>
+                <td class="border-0 fw-bold">{{ i.balance }}</td>
+                <td class="border-0 fw-bold">{{ i.total_balance }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

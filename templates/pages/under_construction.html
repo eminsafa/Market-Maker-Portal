@@ -1,0 +1,42 @@
+{% extends "base/body_base.html" %}
+{% load static %}
+
+{% block title %}Login | Trade Dashboard{% endblock %}
+
+{% block body_content %}
+
+<!-- Container Fluid start -->
+<div id="container-fluid" class="login-fluid">
+
+            <!-- header start -->
+<div id="header-wrap">
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}"><img width="132" src="{% static 'assets/img/logo/LiquidMinersLogo.png' %}" alt="LOGO"></a>
+        </div>
+    </nav>
+</div>
+
+<!-- Login start -->
+<main class="login-wrap">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="login-form liquid-form">
+                    <h2>Work in progress...</h2>
+                </div>
+            </div>
+            <div class="d-none d-lg-block col-lg-6">
+                <div class="login-right">
+                    <img src="{% static 'assets/img/banner-img.png' %}" alt="PIC">
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- Login end -->
+
+</div>
+<!-- Container Fluid end -->
+
+{% endblock %}

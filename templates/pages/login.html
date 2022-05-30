@@ -1,0 +1,64 @@
+{% extends "base/body_base.html" %}
+{% load static %}
+
+{% block title %}Login | Trade Dashboard{% endblock %}
+
+{% block body_content %}
+
+<!-- Container Fluid start -->
+<div id="container-fluid" class="login-fluid">
+
+            <!-- header start -->
+<div id="header-wrap">
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}"><img width="132" src="{% static 'assets/img/logo/LiquidMinersLogo.png' %}" alt="LOGO"></a>
+        </div>
+    </nav>
+</div>
+
+<!-- Login start -->
+<main class="login-wrap">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="login-form liquid-form">
+                    <h2>Log in to our platform</h2>
+                    <!-- Form -->
+                    <form action="#" method="POST">
+                        {{ form.non_field_errors }}
+                        {% csrf_token %}
+
+                        <!-- <input type="hidden" name="csrfmiddlewaretoken" value="ndulJUbxXRDsTJMZXlnUMmJs9eH5TZAmwyHcM9JvIgPPvlGh3ZPQRq5QTKaoTSYz"> -->
+                        <div class="form-group">
+                            <label for="{{ form.username.id_for_label }}">E-mail</label>
+                            <input name="username" class="form-control" id="{{ form.username.id_for_label }}" autofocus required>
+                            {{ form.username.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" name="password" class="form-control" id="id_password" required>
+                            {{ form.password.errors }}
+                        </div>
+                        <div class="back-registered"><span>Not registered? <a href="/register">Create account</a></span></div>
+                        <div class="liquid-form-btn">
+                            <button type="submit" class="btn btn-primary">Log in</button>
+                        </div>
+                    </form>
+                    <!-- End of Form -->
+                </div>
+            </div>
+            <div class="d-none d-lg-block col-lg-6">
+                <div class="login-right">
+                    <img src="{% static 'assets/img/banner-img.png' %}" alt="PIC">
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- Login end -->
+
+</div>
+<!-- Container Fluid end -->
+
+{% endblock %}

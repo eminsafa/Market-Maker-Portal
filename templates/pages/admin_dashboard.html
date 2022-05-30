@@ -1,0 +1,110 @@
+{% extends "base/body_base.html" %}
+{% block page_content %}
+
+    <div class="bg-bl">
+        <div class="availablepools-wrap">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 mb-4">
+                        <div class="card bg-yellow-alt shadow-sm">
+                            <div class="card-header d-flex flex-row align-items-center flex-0">
+                                <div class="d-block">
+                                    <div class="h5 font-weight-normal mb-2">Investments</div>
+                                    <h2 class="h3">${{ total_investment }}</h2>
+                                </div>
+                                <div class="d-flex ml-auto">
+                                    <a href="#" class="btn btn-secondary text-dark btn-sm mr-2"></a>
+                                    <a href="#" class="btn btn-primary btn-sm mr-3"></a>
+                                </div>
+                            </div>
+                            <div class="card-body p-2">
+                                <div class="ct-chart-sales-value ct-double-octave ct-series-g" id="investments-chart">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-12 col-xl-6 mb-4">
+                        <div class="card border-light shadow-sm">
+                            <div class="card-body">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <td>TYPE</td>
+                                        <td>PRICE</td>
+                                        <td>AMOUNT</td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for a in datax %}
+                                        <tr>
+                                            <td>{{ a.type }}</td>
+                                            <td>{{ a.price }}</td>
+                                            <td>{{ a.amount }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-12 col-xl-6 mb-4">
+                        <div class="card border-light shadow-sm">
+                            <div class="card-body">
+                                {% include 'components/admin_chart.html' %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card border-light shadow-sm">
+                            <div class="card-body">
+
+                                <table class="table table-hover table-striped" id="datatable">
+                                    <thead>
+                                    <tr>
+                                        <th>Week #</th>
+                                        <th>Month</th>
+                                        <th>User ID</th>
+                                        <th>Exchange User ID</th>
+                                        <th>Pool Name</th>
+                                        <th>Share of the Pool</th>
+                                        <th>Sell Orders #</th>
+                                        <th>Buy Orders #</th>
+                                        <th>Reward</th>
+                                        <th>Wallet Address</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for d in pool_admin_table_data %}
+                                        <tr>
+                                            <td>{{ d.week }}</td>
+                                            <td>{{ d.month }}</td>
+                                            <td>{{ d.user_id }}</td>
+                                            <td>{{ d.exchange_user_id }}</td>
+                                            <td>{{ d.pool_name }}</td>
+                                            <td>{{ d.share_of_pool }}</td>
+                                            <td>{{ d.sell_order_count }}</td>
+                                            <td>{{ d.buy_order_count }}</td>
+                                            <td>{{ d.reward_amount }} ({{ d.reward_currency }})</td>
+                                            <td>{{ d.wallet_address }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <div class="text-right mb-4">
+                                    <button class="btn btn-primary" onclick="exportTableToCSV('rewards.csv')">Download (CSV)</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

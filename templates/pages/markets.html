@@ -1,0 +1,309 @@
+{% extends "base/body_base.html" %}
+{% load static %}
+
+{% block extra_css %}
+    <style type="text/css">
+        label.campaign_weekly_schedules {
+            margin-bottom: 22px;
+        }
+        label.campaign_months{
+            position: relative;
+            top: -3px;
+            left: 7px;
+            font-weight: normal;
+        }
+        .duration-blk {
+            margin-top: 4px;
+        }
+    </style>
+{% endblock extra_css %}
+
+{% block page_content %}
+
+<div class="bg-bl">
+    <div class="markets-box-wrap">
+        <div class="container">
+            <div class="banner-info-outer">
+                {% include 'components/alert_box.html' %}
+                <div class="row">
+                    <div class="col-6 col-lg-3">
+                        <div class="banner-info-box">total liquidity<strong>{{ total_liquidity }}</strong></div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="banner-info-box">number of bots<strong>{{ number_of_bots }}</strong></div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="banner-info-box">24h volume <strong>{{ day_volume }}</strong></div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="banner-info-box"><em>avg yield (weelky<span>/hourly</span>)</em><strong>{{ weekly_yield }}%/{{ hourly_yield }}%</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="availablepools-wrap">
+        <div class="container">
+            <div class="availablepools-main marketpools-main">
+                <div class="d-flex mb-4 justify-content-between w-100 flex-wrap">
+                    <div class="mb-3 mb-lg-0">
+                        <h3 class="h3">Available Pools</h3>
+                    </div>
+                    {% if is_admin %}
+                    <div>
+                        <button type="button" class="btn btn-outline-primary mr-2" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg"><i class="far fa-plus-circle me-1"></i>Create New Pool</button>
+                    </div>
+                    {% endif %}
+                </div>
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Pair <em></em></th>
+                            <th>Rewards <em></em></th>
+                            <th>Close Date <em></em></th>
+                            <th>Exchange <em></em></th>
+                            <th>Number of bots <em></em></th>
+                            <th>Total liquidity <em></em></th>
+                            <th>Yield (monthly/hourly) <em></em></th>
+                            <th>Status <em></em></th>
+                            <th>Invest <em></em></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in pools %}
+                        <tr>
+                            <td><b>Pair <em></em></b><img class="crypto_icon" src="{% static '/assets/img/cryptoicons'%}/{{ p.pair.buy_side.icon }}.png" alt="icon"><img class="crypto_icon" src="{% static '/assets/img/cryptoicons'%}/{{ p.pair.sell_side.icon }}.png" alt="icon"><span>{{ p.pair.buy_side.symbol }}/{{ p.pair.sell_side.symbol }}</span></td>
+                            <td><b>Rewards <em></em></b><span style="font-weight: 500;">{{ p.currency.symbol }}</span><span>{{ p.amount }}</span></td>
+                            <td><b>Close Date <em></em></b>{{ p.close_date }}<small>{{ p.close_hour }} CET</small></td>
+                            <td><b>Exchange <em></em></b>{{ p.exchange }}</td>
+                            <td><b>Number of bots <em></em></b>{{ p.bot_count }}</td>
+                            <td><b>Total liquidity <em></em></b>{{ p.liquidity }} $</td>
+                            <td><b>Yield (monthly/hourly) <em></em></b>{{ p.monthly_yield }}% / {{ p.hourly_yield }}%</td>
+                            <td><b>Status <em></em></b><span class="btn btn-sm btn-{{ p.status.style }}" href="#">{{ p.status.name }}</span></td>
+                            <td><b>Action <em></em></b>
+                                {% if p.status.name == 'ACTIVE' %}
+                                <a class="btn btn-outline-primary" href="{% url 'bot' %}?pool_id={{ p.id }}">Details</a>
+                                {% else %}
+                                <span>Will be available on {{ p.start_date }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% if is_admin %}
+        <div id="exchange-pair-data-container" data-gateio="{{ gateio_pairs }}" data-monetum="{{ monetum_pairs }}" style="display:none;"></div>
+        <div id="exchange-currency-data-container" data-gateio="{{ gateio_currencies }}" data-monetum="{{ monetum_currencies }}" style="display:none;"></div>
+
+        <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">New Liquidity Pool</h5>
+                    <button type="submit" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="">
+                        <p>Create new reward below. Created rewards will be listed instantly. Name of the rewards will not be visible for investors.</p>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div>
+                                        <label for="">Name</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group">
+                                                <input class="form-control" placeholder="Name" name="name" type="text">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div>
+                                        <label for="exchange">Exchange</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group">
+                                                <select name="exchange" class="form-control" id="exchange-selector" required>
+                                                    <option value="monetum" selected>Monetum</option>
+                                                    <option value="gateio">Gate.io</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div>
+                                        <label for="last_name">Pair</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group">
+                                                <select class="form-control" name="pair" id="exchange-pairs" required>
+                                                    <option value="7">BTC/EUR</option>
+                                                    <option value="8">ETH/EUR</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div>
+                                        <label for="currency">Reward Currency</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group">
+                                                <select name="currency" class="form-control" id="exchange-currencies" required>
+                                                    <option value="1">BTC</option>
+                                                    <option value="2">BCH</option>
+                                                    <option value="3">USDT</option>
+                                                    <option value="4">ETH</option>
+                                                    <option value="5" disabled>EUR</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div>
+                                        <label for="first_name">Reward Amount</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group">
+                                                <input class="form-control" placeholder="Total Amount" name="amount" type="number" style="padding-left:10px" required autocomplete="off">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="end-date">Start</label>
+                                    <div class="input-group">
+                                <span class="input-group-text">
+                                    <svg class="icon icon-xs" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </span>
+                                        <input data-datepicker="" name="end-date" class="form-control" type="text" placeholder="dd/mm/yyyy" id="reward-end-date" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div>
+                                        <label for="campaign_details">Campaign Details</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group">
+                                                <textarea class="form-control" placeholder="Campaign details" name="campaign_detail" maxlength="150" style="padding-left:10px" required></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div>
+                                        <label for="last_name">Maximum Spread</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group">
+                                                <input class="form-control" name="max_spread" id="max-spread" value="2" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div>
+                                        <label for="rules">Rules</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group">
+                                                <textarea class="form-control" placeholder="Rules" name="rules" maxlength="50" style="padding-left:10px" required></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="reward_details">Reward Details</label>
+                                    <div>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group">
+                                                <textarea class="form-control" placeholder="Reward Details" name="reward_detail" maxlength="50" style="padding-left:10px" required></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <div>
+                                        <label for="campaign_duration">How long will the campaign take?</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group duration-blk">
+                                                <input type="checkbox" name="campaign_duration" class="campaign_duration" id="campaign_duration_3" value="3"/><label class="campaign_months" for="campaign_duration_3">3 months</label>
+                                            </div>
+                                            <div class="input-group duration-blk">
+                                                <input type="checkbox" name="campaign_duration" class="campaign_duration" id="campaign_duration_6" value="6"/><label class="campaign_months" for="campaign_duration_6">6 months</label>
+                                            </div>
+                                            <div class="input-group duration-blk">
+                                                <input type="checkbox" name="campaign_duration" class="campaign_duration" id="campaign_duration_12" value="12"/><label class="campaign_months" for="campaign_duration_12">12 months</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mb-3 weekly_schedules_blk" style="display: none;">
+                                    <div>
+                                        <label for="campaign_weekly_schedules" class="campaign_weekly_schedules">Weekly Rewards schedule</label>
+                                        <div class="row" id="id_weekly_schedules"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-3 mb-3"></div>
+                                <div class="col-md-6 mb-3">
+                                    <button class="form-control btn-primary" type="submit">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript">
+        $(function() {
+            $('body').on('click', '.campaign_duration', function(event) {
+                $('.weekly_schedules_blk').show();
+                $('input[name="campaign_duration"]').prop('checked', false);
+                $(this).prop('checked', true);
+                duration_value = this.value;
+                console.log(duration_value);
+                total_schedule_element = "";
+                for(i=0;i<duration_value * 4;i++) {
+                    total_schedule_element += '<div class="col-md-2 mb-3">' +
+                                                    '<div>' +
+                                                        '<label for="week">Week ' + parseInt(i + 1) + '</label>' +
+                                                        '<div class="input-group mb-3">' +
+                                                            '<div class="input-group">' +
+                                                                '<input class="form-control" placeholder="Week ' + parseInt(i + 1) + '" name="week_'+parseInt(i + 1)+'" type="number" style="padding-left:10px" autocomplete="off" required>' +
+                                                            '</div>' +
+                                                        '</div>' +
+                                                    '</div>' +
+                                                '</div>'
+                }
+                $('#id_weekly_schedules').empty();
+                $(total_schedule_element).appendTo($('#id_weekly_schedules'));
+            });
+        });
+    </script>
+{% endblock extra_js %}

@@ -1,0 +1,879 @@
+{% extends "base/body_base.html" %}
+{% load static %}
+
+{% block page_content %}
+    <link href="https://fonts.googleapis.com/css?family=Inter:300,400,500" rel="stylesheet">
+    <style>
+        .header-crypto-icon {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .badge-crypto-icon {
+            width: 1.3rem;
+            height: 1.3rem;
+        }
+
+        .table-crypto-icon {
+            width: 1rem;
+            height: 1rem;
+            margin-right: 5px;
+        }
+
+        .header-crypto-icon-left {
+            align-self: flex-start;
+            transform: translateX(-30%);
+        }
+
+        .header-crypto-symbol-text {
+            font-size: 2rem;
+        }
+
+        .header-price-badge {
+            box-sizing: border-box;
+            margin-top: 0px;
+            min-width: 0px;
+            width: 100%;
+            background-color: rgb(44, 47, 54);
+            padding: 8px 12px;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .header-price-badge:hover {
+            background-color: rgba(179, 180, 190, 1);
+        }
+
+        .header-pair-badge {
+            box-sizing: border-box;
+            margin-top: 0px;
+            min-width: 0px;
+            width: 100%;
+            background-color: rgb(64, 68, 79);
+            padding: 6px 10px;
+            font-size: 1.6rem;
+            font-weight: 300;
+            border-radius: 10px;
+            margin-left: 10px;
+            color: white;
+        }
+
+        .custom-card {
+            border-radius: 16px;
+            padding: 1rem;
+        }
+
+        .custom-color {
+            background-color: rgb(25, 27, 31);
+        }
+
+        .custom-font {
+            font-family: "Inter", "Nunito Sans", sans-serif;
+            font-weight: 300;
+        }
+
+        .table-crypto-symbol {
+            font-weight: 400;
+        }
+
+        .chart-title {
+            font-size: 1.5rem;
+            font-weight: 450;
+            color: white;
+        }
+        .custom-table td{
+            color: white !important;
+        }
+        .no-link-a{
+            color: white; font-weight: 300; text-decoration: none;
+        }
+        .nav-pills .nav-link{
+            background-color: rgb(64, 68, 79);
+            color: white;
+        }
+        .nav-pills .nav-link.active{
+            background-color: rgb(33, 114, 229);
+            color: white;
+        }
+    </style>
+    <div class="bot-wrap custom-font" style="background-color: rgb(31, 33, 40);">
+        <div class="container pt-4">
+            <div class="row">
+                <div class="col-12 custom-font">
+                    <a class="no-link-a" style="color: rgb(195, 197, 203);" href="{% url 'home' %}">Home</a><span style="color: white;"> > <a class="no-link-a" href="{% url 'markets' %}">Pools</a> > {{ investment.pool.pair.buy_side.symbol }} / {{ investment.pool.pair.sell_side.symbol }}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 mt-4" style="color: white; font-weight: 500;">
+                    <img class="header-crypto-icon mb-1" src="{% static '/assets/img/cryptoicons' %}/{{ investment.pool.pair.buy_side.icon }}.png" alt="icon">
+                    <img class="header-crypto-icon header-crypto-icon-left mb-1" src="{% static '/assets/img/cryptoicons' %}/{{ investment.pool.pair.sell_side.icon }}.png" alt="icon">
+                    <span class="header-crypto-symbol-text align-middle pt-1">{{ investment.pool.pair.buy_side.symbol }} / {{ investment.pool.pair.sell_side.symbol }}<span class="header-pair-badge mr-2">{{ yield }}%</span><span class="header-pair-badge">{{ exchange_name }}</span></span>
+                </div>
+            </div>
+            <div class="col-12 mt-4">
+                <span class="header-price-badge"><img class="badge-crypto-icon mb-1" src="{% static '/assets/img/cryptoicons' %}/{{ investment.pool.pair.buy_side.icon }}.png"
+                                                      alt="icon"><span> 1 {{ investment.pool.pair.buy_side.symbol }} = {{ price }} {{ investment.pool.pair.sell_side.symbol }}</span></span>
+                <span class="header-price-badge"><img class="badge-crypto-icon mb-1" src="{% static '/assets/img/cryptoicons' %}/{{ investment.pool.pair.sell_side.icon }}.png"
+                                                      alt="icon"><span> 1 {{ investment.pool.pair.sell_side.symbol }} = {{ op_price }} {{ investment.pool.pair.buy_side.symbol }}</span></span>
+            </div>
+            <div class="bot-top-bar">
+                <div class="row flex-md-row-reverse">
+                    {% include 'components/alert_box.html' %}
+                    <div class="col-md-3 col-lg-5">
+                        <div class="d-flex justify-content-md-end justify-content-center bot-top-btn">
+                            {% if not is_user_invested %}
+                                <button type="button" class="btn btn-primary btn-modified" onclick="startTheBot()">Start</button>
+                            {% else %}
+                                <button type="button" class="btn btn-primary btn-modified" disabled style="margin-right: 1rem;">Bot is running</button>
+                                <button type="button" class="btn btn-reddit btn-modified ml-3" data-bs-toggle="modal" data-bs-target="#stopModal">Stop Bot</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-9 col-lg-7">
+                        <ul class="nav nav-pills flex-column flex-md-row align-items-center" id="pills-tab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link custom-tab-link active" id="botSetup-tab" data-bs-toggle="pill" data-bs-target="#botSetup" type="button" role="tab" aria-controls="botSetup" aria-selected="true">BOT SETUP</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link custom-tab-link" id="botTrades-tab" data-bs-toggle="pill" data-bs-target="#botTrades" type="button" role="tab" aria-controls="botTrades" aria-selected="false">BOT TRADES</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link custom-tab-link" id="dashboard-tab" data-bs-toggle="pill" data-bs-target="#dashboard" type="button" role="tab" aria-controls="dashboard" aria-selected="false">DASHBOARD</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="bot-main-section">
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade active show" id="botSetup" role="tabpanel" aria-labelledby="botSetup-tab">
+                        <div class="settings-info-outer">
+                            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 justify-content-center">
+                                <div class="col">
+                                    <div class="settings-info-box">Exchange:<strong>{{ pool.exchange }}</strong></div>
+                                </div>
+                                <div class="col">
+                                    <div class="settings-info-box">{{ pool.pair.buy_side.symbol }} / {{ pool.pair.sell_side.symbol }}</div>
+                                </div>
+                                <div class="col">
+                                    <div class="settings-info-box">Week {{ current_week }} of {{ pool.campaign_duration }}</div>
+                                </div>
+                                <div class="col">
+                                    <div class="settings-info-box">Total Weekly Rewards<strong>{{ pool.amount }} {{ pool.currency.symbol }}</strong></div>
+                                </div>
+                                <div class="col col-12">
+                                    <div class="settings-info-box"><span>Yield (Weekly/<a href="#">Hourly</a>)</span><strong><small>{{ pool.weekly_yield }}%</small>/{{ pool.hourly_yield }}%</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="setup-bot">
+                            <a href="#">How to set up your bot?</a>
+                        </div>
+                        {% if not is_user_invested %}
+                            <div class="bot-form-outer">
+                                <div class="row">
+                                    <div class="col-md-7 col-lg-8">
+                                        <div class="bot-form-left">
+                                            <form method="POST" class="bot-form needs-validation" id="theBotForm">
+                                                {% csrf_token %}
+                                                <input class="d-none" name="reward_id" value="{{ pool.id }}">
+                                                <input class="d-none" id="price" value="{{ price }}">
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <div class="form-field">
+                                                            <label for="" class="form-label">Base Balance</label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">{{ balance.base.symbol }}</span>
+                                                                <input type="number" class="form-control" value="{{ balance.base_amount_rounded }}" disabled>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-field">
+                                                            <label for="" class="form-label">Quote Balance</label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">{{ balance.quote.symbol }}</span>
+                                                                <input type="number" class="form-control" value="{{ balance.quote_amount_rounded }}" disabled>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-field">
+                                                            <label for="" class="form-label">Max Base Balance Allocation</label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">{{ balance.base.symbol }}</span>
+                                                                <input type="number" class="form-control" id="base-balance-allocation" name="base-balance" value="{{ balance.base_amount_rounded }}" onchange="balanceChanged('base')" min="0.000" step="0.001" max="{{ balance.base_amount_rounded }}">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-field">
+                                                            <label for="" class="form-label">Max Quote Balance Allocation</label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">{{ balance.quote.symbol }}</span>
+                                                                <input type="number" class="form-control" id="quote-balance-allocation" name="quote-balance" value="{{ balance.quote_amount_rounded }}" onchange="balanceChanged('quote')" min="0.000" step="0.001"
+                                                                       max="{{ balance.quote_amount_rounded }}">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr>
+                                                    <div class="col-lg-12">
+                                                        <div class="form-field">
+                                                            <label for="number-of-orders-input" class="form-label">Number of Orders</label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">Number of Orders</span>
+                                                                <select type="text" class="form-control" id="number-of-orders-input" onchange="orderCountChanged()" name="number-of-orders">
+                                                                    <option value="1" selected>1</option>
+                                                                    <option value="2">2</option>
+                                                                    <option value="3">3</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- ORDER PAIR CONFIGURATIONS -->
+
+                                                    <!-- ORDER 1 -->
+                                                    <div class="col-lg-4">
+                                                        <div class="form-field">
+                                                            <label for="o1-allocation" class="form-label">Order Allocation</label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">1° Order (%)</span>
+                                                                <input type="number" class="form-control allocation-input" value="100" min="1" step="1.0" max="100" name="o1-allocation" id="o1-allocation" {% if is_user_invested %}disabled{% endif %}>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <div class="form-field">
+                                                            <label for="" class="form-label">Bid Spread</label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">1° Order (%)</span>
+                                                                <input type="number" class="form-control" value="2" min="0" step="0.1" max="100" name="o1-bid-spread" {% if is_user_invested %}disabled{% endif %}>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <div class="form-field">
+                                                            <label for="" class="form-label">Ask Spread</label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">1° Order (%)</span>
+                                                                <input type="number" class="form-control" value="2" min="0" step="0.1" max="100" name="o1-ask-spread" {% if is_user_invested %}disabled{% endif %}>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- ORDER 2 -->
+                                                    <div class="col-lg-4 order-2-param-container" style="display: none;">
+                                                        <div class="form-field">
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">2° Order (%)</span>
+                                                                <input type="number" class="form-control allocation-input order-2-param-input" value="1" min="1" step="1" max="100" name="o2-allocation" {% if is_user_invested %}disabled{% endif %}>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4 order-2-param-container" style="display: none;">
+                                                        <div class="form-field">
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">2° Order (%)</span>
+                                                                <input type="number" class="form-control order-2-param-input" value="2" min="0" step="0.1" max="100" name="o2-bid-spread" {% if is_user_invested %}disabled{% endif %}>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4 order-2-param-container" style="display: none;">
+                                                        <div class="form-field">
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">2° Order (%)</span>
+                                                                <input type="number" class="form-control" value="2" min="0" step="0.1" max="100" name="o2-ask-spread" {% if is_user_invested %}disabled{% endif %}>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- ORDER 3 -->
+                                                    <div class="col-lg-4 order-3-param-container" style="display: none;">
+                                                        <div class="form-field">
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">3° Order (%)</span>
+                                                                <input type="number" class="form-control allocation-input order-3-param-input" value="1" min="1" step="1" max="100" name="o3-allocation" {% if is_user_invested %}disabled{% endif %}>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4 order-3-param-container" style="display: none;">
+                                                        <div class="form-field">
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">3° Order (%)</span>
+                                                                <input type="number" class="form-control order-3-param-input" value="2" min="0" step="0.1" max="100" name="o3-bid-spread" {% if is_user_invested %}disabled{% endif %}>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4 order-3-param-container" style="display: none;">
+                                                        <div class="form-field">
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">3° Order (%)</span>
+                                                                <input type="number" class="form-control order-3-param-input" value="2" min="0" step="0.1" max="100" name="o3-ask-spread" {% if is_user_invested %}disabled{% endif %}>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr>
+                                                    <!-- RENEW PARAMS -->
+
+                                                    <div class="col-lg-6">
+                                                        <div class="form-field">
+                                                            <label for="" class="form-label">Renew Orders After a Set Time</label>
+                                                            <label class="switch" for="renew-with-time-switch">
+                                                                <input type="checkbox" name="renew-with-time-switch" id="renew-with-time-switch" onchange="renewTimeSwitchChanged()" checked {% if is_user_invested %}disabled{% endif %}>
+                                                                <div class="slider round"></div>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-field">
+                                                            <label for="" class="form-label">Renew Time</label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">Seconds</span>
+                                                                <input type="number" class="form-control" id="renew-with-time-input" value="30" min="1" max="5000" step="1" name="renew-time" {% if is_user_invested %}disabled{% endif %}>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <div class="form-field">
+                                                            <label for="" class="form-label">Renew Unfilled Pair of Orders</label>
+                                                            <label class="switch" for="renew-unfilled-orders-switch">
+                                                                <input type="checkbox" name="renew-unfilled-orders-switch" id="renew-unfilled-orders-switch" checked {% if is_user_invested %}disabled{% endif %}>
+                                                                <div class="slider round"></div>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <div class="form-field">
+                                                            <label for="" class="form-label">Renew Partially Filled Pair of Orders</label>
+                                                            <label class="switch" for="renew-partially-filled-orders-switch">
+                                                                <input type="checkbox" name="renew-partially-filled-orders-switch" id="renew-partially-filled-orders-switch" {% if is_user_invested %}disabled{% endif %}>
+                                                                <div class="slider round"></div>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <hr>
+
+                                                    <div class="col-lg-12">
+                                                        <div class="form-field">
+                                                            <label for="" class="form-label">Enable Auto-Cancel Based On & Change From Order</label>
+                                                            <label class="switch" for="enable-auto-cancel-switch">
+                                                                <input type="checkbox" name="enable-auto-cancel-switch" id="enable-auto-cancel-switch" onchange="autoCancelStatusChanged()" checked {% if is_user_invested %}disabled{% endif %}>
+                                                                <div class="slider round"></div>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-field">
+                                                            <label for="" class="form-label">% Deviation From Bid Order</label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">1° Order (%)</span>
+                                                                <input type="number" class="form-control auto-cancel-input" value="3.5" min="0.1" step="0.1" max="99.0" name="o1-bid-deviation">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-field">
+                                                            <label for="" class="form-label">% Deviation From Ask Order</label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">1° Order (%)</span>
+                                                                <input type="number" class="form-control auto-cancel-input" value="3.5" min="0.1" step="0.1" max="99.0" name="o1-ask-deviation">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 order-2-param-container" style="display: none;">
+                                                        <div class="form-field">
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">2° Order (%)</span>
+                                                                <input type="number" class="form-control order-2-param-input auto-cancel-input" value="3.5" min="0.1" step="0.1" max="99" name="o2-bid-deviation">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 order-2-param-container" style="display: none;">
+                                                        <div class="form-field">
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">2° Order (%)</span>
+                                                                <input type="number" class="form-control order-2-param-input auto-cancel-input" value="3.5" min="0.1" step="0.1" max="99" name="o2-ask-deviation">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 order-3-param-container" style="display: none;">
+                                                        <div class="form-field">
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">3° Order (%)</span>
+                                                                <input type="number" class="form-control order-3-param-input auto-cancel-input" value="3.5" min="0.1" step="0.1" max="99" name="o3-bid-deviation">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 order-3-param-container" style="display: none;">
+                                                        <div class="form-field">
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">3° Order (%)</span>
+                                                                <input type="number" class="form-control order-3-param-input auto-cancel-input" value="3.5" min="0.1" step="0.1" max="99" name="o1-ask-deviation">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <div class="form-field">
+                                                            <label for="" class="form-label">Stop Bot If Auto-Cancel Is Triggered</label>
+                                                            <label class="switch" for="stop-bot-switch">
+                                                                <input type="checkbox" name="stop-bot-switch" id="stop-bot-switch">
+                                                                <div class="slider round"></div>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <hr>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-field">
+                                                            <label for="" class="form-label">Current Share of the Pool</label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">%</span>
+                                                                <input type="text" class="form-control" value="{{ current_share_of_pool }}" disabled>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="settings-info-bar bot-info-bar inline">
+                                                    <div class="settings-info-box">Your referral gains address<strong></strong>
+                                                        <div class="input-group mb-3">
+                                                            <input type="text" class="form-control" id="walletAddressInput" {% if wallet_address %}value="{{ wallet_address }}"{% endif %} value="RI34N49SDB5KD3NNFU4JDH2JF85" placeholder="Please enter your {{ pool.currency.symbol }} wallet address"
+                                                                   name="wallet_address" {% if wallet_address %}disabled{% endif %} required>
+                                                            <button type="button" class="btn btn-outline-primary" onclick="inputDisableToggle('walletAddressInput')">Edit</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5 col-lg-4">
+                                        <div class="bot-form-right">
+                                            <h4>Campaign Details</h4>
+                                            <p>{% if reward.campaign_detail %}{{ reward.campaign_detail }}{% else %}Symbol is the next-generation Proof-of-Stake+ (PoS+) blockchain from NEM, boasting enterprise-grade programmability and security. Symbol from NEM brings cutting-edge technical features
+                                                which can be leveraged by innovative projects building the new economy.{% endif %}</p>
+                                            <h4>Rules</h4>
+                                            <p>{% if reward.rules %}{{ reward.rules }}{% else %}Orders must be created between 0.5% and 2% of the orderbook spread Closed orders outside 2% won't be considered for the reward{% endif %}</p>
+                                            <h4>Rewards</h4>
+                                            <p>{% if reward.reward_detail %}{{ reward.reward_detail }}{% else %}By adding liquidity you'll earn 1,000 USDC weekly to be distrubeted by your share of the BeWater Liquidity Pool.{% endif %}</p>
+                                            <h4>Payouts</h4>
+                                            <p>Payouts will be provided MONTHLY on the address that you indicate</p>
+                                            <h4>Weekly payments</h4>
+                                            <table class="table table-striped table-hover">
+                                                <thead>
+                                                <tr>
+                                                    <th><b><i>Week </i><em></em></b></th>
+                                                    <th><b><i>Amount ({{ pool.currency.symbol }})</i><em></em></b></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for week_amount in reward.weekly_amount.all %}
+                                                    <tr>
+                                                        <td><b>Week {{ forloop.counter }}</b></td>
+                                                        <td><b>{{ week_amount.amount }}</b></td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="bot-form-outer">
+                                <div class="row">
+
+                                    <div class="col-12 col-sm-12 col-lg-8 col-xl-8 mb-4">
+                                        <div class="custom-card custom-color">
+                                            <span class="chart-title">Your Investment Details</span>
+                                            <div class="col-12">
+                                                <div class="custom-card custom-color my-2" style="color: white; font-size: 0.9rem; padding: 0.85rem; font-weight: 450; background-color: rgb(44, 47, 54);">
+                                                    <span style="margin-bottom: 5px;">Allocated Balance</span>
+                                                    <table class="mt-2" style="width: 100%;">
+                                                        <tr style="height: 27px;">
+                                                            <td><img class="table-crypto-icon" style="margin-bottom: 0.10rem;" src="{% static '/assets/img/cryptoicons' %}/{{ investment.pool.pair.buy_side.icon }}.png" alt="icon"><span
+                                                                    class="table-crypto-symbol">{{ investment.pool.pair.buy_side.symbol }}</span></td>
+                                                            <td class="text-end">{{ investment.coin_amount|floatformat:4 }}</td>
+                                                        </tr>
+                                                        <tr style="height: 27px;">
+                                                            <td><img class="table-crypto-icon" style="margin-bottom: 0.10rem;" src="{% static '/assets/img/cryptoicons' %}/{{ investment.pool.pair.sell_side.icon }}.png" alt="icon"><span
+                                                                    class="table-crypto-symbol">{{ investment.pool.pair.sell_side.symbol }}</span></td>
+                                                            <td class="text-end">{{ investment.fiat_amount|floatformat:4 }}</td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12 col-sm-12 col-lg-4 col-xl-4 mb-4">
+                                                    <div class="custom-card">
+                                                        <span style="color: rgb(195, 197, 203);; font-size: 1rem; font-weight: 300;">Renew Time</span><br>
+                                                        <span style="color: white; font-size: 1.5rem; font-weight: 500;">{{ investment.renew_time }}</span><br>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-sm-12 col-lg-4 col-xl-4 mb-4">
+                                                    <div class="custom-card">
+                                                        <span style="color: rgb(195, 197, 203);; font-size: 1rem; font-weight: 300;">Renew Unfilled Orders</span><br>
+                                                        <span style="color: {% if investment.renew_unfilled_orders %}green{% else %}red{% endif %}; font-size: 1.5rem; font-weight: 500;">{{ investment.renew_unfilled_orders }}</span><br>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-sm-12 col-lg-4 col-xl-4 mb-4">
+                                                    <div class="custom-card">
+                                                        <span style="color: rgb(195, 197, 203);; font-size: 1rem; font-weight: 300;">Renew Partially Filled Orders</span><br>
+                                                        <span style="color: {% if investment.renew_unfilled_orders %}green{% else %}red{% endif %}; font-size: 1.5rem; font-weight: 500;">{{ investment.renew_unfilled_orders }}</span><br>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12 col-sm-12 col-lg-4 col-xl-4 mb-4">
+                                                    <div class="custom-card">
+                                                        <span style="color: rgb(195, 197, 203);; font-size: 1rem; font-weight: 300;">Number of Order Pair</span><br>
+                                                        <span style="color: white; font-size: 1.5rem; font-weight: 500;">{{ investment.order_pair_count }}</span><br>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-sm-12 col-lg-4 col-xl-4 mb-4">
+                                                    <div class="custom-card">
+                                                        <span style="color: rgb(195, 197, 203);; font-size: 1rem; font-weight: 300;">Auto Cancel Status</span><br>
+                                                        <span style="color: {% if investment.auto_cancel_active %}green{% else %}red{% endif %}; font-size: 1.5rem; font-weight: 500;">{{ investment.auto_cancel_active }}</span><br>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-sm-12 col-lg-4 col-xl-4 mb-4">
+                                                    <div class="custom-card">
+                                                        <span style="color: rgb(195, 197, 203);; font-size: 1rem; font-weight: 300;">Stop Bot Status</span><br>
+                                                        <span style="color: {% if investment.stop_bot_active %}green{% else %}red{% endif %}; font-size: 1.5rem; font-weight: 500;">{{ investment.stop_bot_active }}</span><br>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-12 col-lg-4 col-xl-4 mb-4">
+                                        <div class="custom-card custom-color">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <span style="margin-bottom: 5px; color: white; font-weight: 400; font-size: 1.2rem;">Order Configurations</span>
+                                                    {% for oc in investment.order_config.all %}
+                                                        <div class="custom-card custom-color mt-2" style="color: white; font-size: 0.9rem; padding: 0.85rem; font-weight: 450; background-color: rgb(44, 47, 54);">
+                                                            <span style="margin-bottom: 5px;">Order Pair #{{ oc.queue }}</span>
+                                                            <table class="mt-2" style="width: 100%;">
+                                                                <tr style="height: 27px;">
+                                                                    <td><span class="table-crypto-symbol">Allocation</span></td>
+                                                                    <td class="text-end">{{ oc.balance_allocation }}</td>
+                                                                </tr>
+                                                                <tr style="height: 27px;">
+                                                                    <td><span class="table-crypto-symbol">Bid Spread</span></td>
+                                                                    <td class="text-end">{{ oc.bid_spread }}</td>
+                                                                </tr>
+                                                                <tr style="height: 27px;">
+                                                                    <td><span class="table-crypto-symbol">Ask Spread</span></td>
+                                                                    <td class="text-end">{{ oc.ask_spread }}</td>
+                                                                </tr>
+                                                                <tr style="height: 27px;">
+                                                                    <td><span class="table-crypto-symbol">Auto Cancel Bid Deviation</span></td>
+                                                                    <td class="text-end">{{ oc.auto_cancel_bid_deviation }}</td>
+                                                                </tr>
+                                                                <tr style="height: 27px;">
+                                                                    <td><span class="table-crypto-symbol">Auto Cancel Ask Deviation</span></td>
+                                                                    <td class="text-end">{{ oc.auto_cancel_ask_deviation }}</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    {% endfor %}
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- DASHBOARD TAB -->
+                    <div class="tab-pane fade custom-font" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
+                        <div class="row">
+                            <div class="col-12 col-sm-12 col-lg-4 col-xl-4 mb-4">
+                                <div class="custom-card custom-color">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="custom-card custom-color mb-2" style="color: white; font-size: 0.9rem; padding: 0.85rem; font-weight: 450; background-color: rgb(44, 47, 54);">
+                                                <span style="margin-bottom: 5px;">Total Tokens Locked</span>
+                                                <table class="mt-2" style="width: 100%;">
+                                                    <tr style="height: 27px;">
+                                                        <td><img class="table-crypto-icon" style="margin-bottom: 0.10rem;" src="{% static '/assets/img/cryptoicons' %}/{{ investment.pool.pair.buy_side.icon }}.png" alt="icon"><span
+                                                                class="table-crypto-symbol">{{ investment.pool.pair.buy_side.symbol }}</span></td>
+                                                        <td class="text-end">{{ coin_locked }}</td>
+                                                    </tr>
+                                                    <tr style="height: 27px;">
+                                                        <td><img class="table-crypto-icon" style="margin-bottom: 0.10rem;" src="{% static '/assets/img/cryptoicons' %}/{{ investment.pool.pair.sell_side.icon }}.png" alt="icon"><span
+                                                                class="table-crypto-symbol">{{ investment.pool.pair.sell_side.symbol }}</span></td>
+                                                        <td class="text-end">{{ fiat_locked }}</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="custom-card">
+                                                <span style="color: rgb(195, 197, 203);; font-size: 1rem; font-weight: 300;">Liquidity</span><br>
+                                                <span style="color: white; font-size: 1.5rem; font-weight: 500;">${{ liquidity|floatformat:2 }}</span><br>
+                                                <span style="color: green; font-weight: 500; font-size: 0.9rem;">↑ 0.00%</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="custom-card">
+                                                <span style="color: rgb(195, 197, 203);; font-size: 1rem; font-weight: 300;">Volume 24h</span><br>
+                                                <span style="color: white; font-size: 1.5rem; font-weight: 500;">${{ day_volume|floatformat:2 }}</span><br>
+                                                <span style="color: red; font-weight: 500; font-size: 0.9rem;">↓ 0.00%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-12 col-lg-8 col-xl-8 mb-4">
+                                <div class="custom-card custom-color">
+
+                                    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js" integrity="sha512-QSkVNOCYLtj73J4hbmVoOV6KVZuMluZlioC+trLpewV8qMjsWqlIQvkn1KGX2StWvPMdWGBqim1xlC8krl1EKQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+                                    <span class="chart-title">Volume</span>
+                                    <canvas id="myChart" width="400" height="200"></canvas>
+                                    <script>
+                                        const ctx = document.getElementById('myChart');
+                                        const myChart = new Chart(ctx, {
+                                            type: 'bar',
+                                            data: {
+                                                datasets: [{
+                                                    backgroundColor: 'rgb(33, 114, 229)',
+                                                    data: [
+                                                        {% for vh in volume_history %}
+                                                        {x:'{{ vh.datetime.date }}', y:{{vh.value}} },
+                                                        {% endfor %}
+                                                    ]
+                                                }]},
+                                            options: {
+                                                plugins: {
+                                                    legend: {
+                                                        display: false
+                                                    }
+                                                },
+                                                scales: {
+                                                    y: {
+                                                        ticks: {
+                                                            // Include a dollar sign in the ticks
+                                                            callback: function(value, index, ticks) {
+                                                                return '$' + value;
+                                                            }
+                                                        },
+                                                        display: false,
+                                                        //beginAtZero: true
+                                                    },
+                                                    x: {
+                                                        display: false
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="custom-card custom-color">
+                                    <span class="chart-title mt-1">Rewards</span>
+                                    <div class="bot-table-section availablepools-main mt-4" style="background-color: rgb(31, 33, 40); color: white; box-shadow: none;">
+                                        <table class="table table-hover table-dark custom-table" style="color: white;">
+                                            <thead>
+                                            <tr>
+                                                <th><b><i>Pair </i><em></em></b></th>
+                                                <th><b><i>Duration </i><em></em></b></th>
+                                                <th><b><i>Week </i><em></em></b></th>
+                                                <th><b><i>Total Rewards</i><em></em></b></th>
+                                                <th><b><i>Your Rewards </i><em></em></b></th>
+                                                <th><b><i>Status Payment </i><em></em></b></th>
+                                                <th><b><i>Payment address</i><em></em></b></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for s in sharings %}
+                                                <tr>
+                                                    <td><b>Pair <em></em></b><img class="crypto_icon" src="{% static '/assets/img/cryptoicons' %}/{{ s.investment.pool.pair.buy_side.icon }}.png" alt="icon">
+                                                        <img class="crypto_icon" src="{% static '/assets/img/cryptoicons' %}/{{ s.investment.pool.pair.sell_side.icon }}.png" alt="icon">
+                                                        <span>{{ s.investment.pool.pair.buy_side.symbol }}/{{ s.investment.pool.pair.sell_side.symbol }}</span>
+                                                    </td>
+                                                    <td><b><i>Duration </i><em></em></b>{{ s.duration }} min</td>
+                                                    <td><b><i>Week </i><em></em></b>Week #3</td>
+                                                    <td><b><i>Total Rewards</i><em></em></b>{{ s.calculation.amount|floatformat:4 }} {{ s.investment.pool.currency.symbol }}</td>
+                                                    <td><b><i>Your Rewards </i><em></em></b>{{ s.amount|floatformat:4 }} {{ s.investment.pool.currency.symbol }}</td>
+                                                    <td><b><i>Status Payment </i><em></em></b><span class="btn btn-sm btn-{{ s.transaction.style }}" href="#">{{ s.transaction.name }}</span></td>
+                                                    <td><b><i>Payment address </i><em></em></b>{{ s.wallet_address }}.. <img src="{% static '/assets/img/fluent_copy-24-regular.svg' %}" alt="copy"></td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END DASHBOARD TAB -->
+
+                    <div class="tab-pane fade" id="botTrades" role="tabpanel" aria-labelledby="botTrades-tab">
+                        <div class="settings-info-outer bot-info-outer">
+                            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 justify-content-center">
+                                <div class="col">
+                                    <div class="settings-info-box">Exchange:<strong>{{ pool.exchange }}</strong></div>
+                                </div>
+                                <div class="col">
+                                    <div class="settings-info-box">{{ pool.pair.buy_side.symbol }} / {{ pool.pair.sell_side.symbol }}</div>
+                                </div>
+                                <div class="col">
+                                    <div class="settings-info-box">Week {{ current_week }} of {{ pool.campaign_duration }}</div>
+                                </div>
+                                <div class="col">
+                                    <div class="settings-info-box">Total Weekly Rewards<strong>{{ pool.amount }} {{ pool.currency.symbol }}</strong></div>
+                                </div>
+                                <div class="col col-12">
+                                    <div class="settings-info-box"><span>Yield (Weekly/<a href="#">Hourly</a>)</span><strong><small>{{ pool.weekly_yield }}%</small>/{{ pool.hourly_yield }}%</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bot-table-section availablepools-main">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Timestamp <em></em></th>
+                                    <th>Pair <em></em></th>
+                                    <th>Type <em></em></th>
+                                    <th>Amount <em></em></th>
+                                    <th>Price <em></em></th>
+                                    <th>Status <em></em></th>
+                                    <th>Action <em></em></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for o in orders %}
+                                    <tr>
+                                        <td><b>Timestamp<em></em></b>{{ o.created_at }}</td>
+                                        <td><b>Pair <em></em></b><img class="crypto_icon" src="{% static '/assets/img/cryptoicons' %}/{{ o.reward.pair.buy_side.icon }}.png" alt="icon"><img class="crypto_icon" src="{% static '/assets/img/cryptoicons' %}/{{ o.reward.pair.sell_side.icon }}.png"
+                                                                                                                                                                                             alt="icon"><span>{{ o.reward.pair.buy_side.symbol }}/{{ o.reward.pair.sell_side.symbol }}</span></td>
+                                        <td><b>Type <em></em></b><span class="btn btn-sm btn-{{ o.side_style }}" href="#">{{ o.side }} #{{ o.config.queue }}</span></td>
+                                        <td><b>Amount <em></em></b>{{ o.amount_rounded }}</td>
+                                        <td><b>Price <em></em></b>{{ o.price_rounded }}</td>
+                                        <td><b>Status <em></em></b><span class="btn btn-sm btn-{{ o.status.style }}" id="order-status-{{ o.eid }}" href="#">{{ o.status.name }}</span></td>
+                                        <td><b>Action <em></em></b>{% if o.status.name == 'ACTIVE' %}
+                                            <a class="btn btn-outline-primary" onclick="cancelOrder('{% url 'api_cancel_order' %}?order_id={{ o.id }}&order_eid={{ o.eid }}&user_id={{ user.id }}', '{{ o.eid }}')" id="cancel-button-{{ o.eid }}">Cancel</a>{% endif %}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="bot-note-sec">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <p>* We only keep your last 30 days trade information. Please notice that you can always go to your exchange and check there the full history</p>
+                                </div>
+                            </div>
+                        </div>
+                        <nav aria-label="..." style="display: none;">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item active" aria-current="page">
+                                    <span class="page-link">1</span>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">4</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="stopModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Stop the Bot</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure stop bot? If you stop the bot, your rewards of current week will be removed!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a href="{% url 'bot' %}?pool_id={{ pool.id }}&cancel=1">
+                        <button type="button" class="btn btn-primary">Proceed</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function orderCountChanged() {
+            var numberOfOrders = parseInt(document.getElementById('number-of-orders-input').value);
+            var maxNumberOfOrders = 3;
+
+            if (numberOfOrders > 0) {
+                for (let i = 1; i <= numberOfOrders; i++) {
+                    var containerElements = document.getElementsByClassName('order-' + i + '-param-container');
+                    for (let i = 0; i < containerElements.length; i++) {
+                        containerElements[i].style.display = 'block';
+                    }
+                    var inputElements = document.getElementsByClassName('order-' + i + '-param-input');
+                    for (let i = 0; i < inputElements.length; i++) {
+                        inputElements[i].setAttribute('required', true);
+                    }
+                }
+
+                for (let i = numberOfOrders + 1; i <= maxNumberOfOrders; i++) {
+                    var containerElementsR = document.getElementsByClassName('order-' + i + '-param-container');
+                    for (let i = 0; i < containerElementsR.length; i++) {
+                        containerElementsR[i].style.display = 'none';
+                    }
+                    var inputElementsR = document.getElementsByClassName('order-' + i + '-param-input');
+                    for (let i = 0; i < inputElementsR.length; i++) {
+                        inputElementsR[i].removeAttribute('required');
+                    }
+                }
+            }
+        }
+
+        function autoCancelStatusChanged() {
+            var autoCancelParamInputs = document.getElementsByClassName('auto-cancel-input');
+            var autoCancelSwitch = document.getElementById('enable-auto-cancel-switch').checked;
+            for (let i = 0; i < autoCancelParamInputs.length; i++) {
+                if (autoCancelSwitch) {
+                    autoCancelParamInputs[i].removeAttribute('disabled');
+                } else {
+                    autoCancelParamInputs[i].setAttribute('disabled', true);
+                }
+            }
+        }
+
+        function renewTimeSwitchChanged() {
+            var renewTimeSwitch = document.getElementById('renew-with-time-switch');
+            var renewTimeInput = document.getElementById('renew-with-time-input');
+            if (renewTimeSwitch.checked) {
+                renewTimeInput.removeAttribute('disabled');
+            } else {
+                renewTimeInput.setAttribute('disabled', true);
+            }
+        }
+
+        function balanceChanged(changedSide) {
+            var price = parseFloat(document.getElementById('price').value);
+            if (price > 0.0) {
+                var base = document.getElementById('base-balance-allocation');
+                var quote = document.getElementById('quote-balance-allocation');
+                if (changedSide === 'base') {
+                    var quote_calc = parseFloat(base.value) * price;
+                    quote.value = Math.round(quote_calc * 1000) / 1000
+                } else if (changedSide === 'quote') {
+                    var base_calc = parseFloat(quote.value) / price;
+                    base.value = Math.round(base_calc * 1000) / 1000
+                }
+            }
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends "base/body_base.html" %}
+{% load static %}
+
+{% block page_content %}
+
+    <div class="bot-wrap" style="background-color: #F2F7FD;">
+        <div class="container">
+            <div class="bot-top-bar">
+                    <div class="col-md-12 col-lg-12">
+                        <div><h3>Orders</h3></div>
+                        <table class="table">
+                            <tr>
+                                <td>Order ID</td>
+                                <td>Status</td>
+                                <td>Pair</td>
+                                <td>Side</td>
+                                <td>Amount</td>
+                                <td>Price</td>
+                                <td>Created At</td>
+                                <td>Cancel</td>
+                            </tr>
+                            {% for order in orders %}
+                                <tr>
+                                    <td>{{ order.id }}</td>
+                                    <td>{{ order.status }}</td>
+                                    <td>{{ order.pair }}</td>
+                                    <td>{{ order.side }}</td>
+                                    <td>{{ order.amount }}</td>
+                                    <td>{{ order.price }}</td>
+                                    <td>{{ order.created_at }}</td>
+                                    <td><a href="{% url 'cancel_monitor_order' %}?order_id={{ order.id }}&pair={{ order.pair }}{{ order.suid }}">Cancel</a></td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    <div class="col-md-12 col-lg-12">
+                        <div><h3>Order History</h3></div>
+                        <table class="table">
+                            <tr>
+                                <td>Created At / <br><sub>Order ID</sub></td>
+                                <td>Pair</td>
+                                <td>Amount</td>
+                                <td>Price</td>
+                                <td>Side</td>
+                                <td>Fee</td>
+                            </tr>
+                            {% for h in history %}
+                                <tr>
+                                    <td>{{ h.created_at }}<br><sub>{{ h.order_id }}</sub></td>
+                                    <td>MIMIR/USDT</td>
+                                    <td>{{ h.amount }}</td>
+                                    <td>{{ h.price }}</td>
+                                    <td>{{ h.side }}</td>
+                                    <td>{{ h.fee }} / {{ h.fee_currency }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    <div class="col-md-12 col-lg-12">
+                        <div><h3>Balance</h3></div>
+                        <table class="table">
+                            <tr>
+                                <td>Balance</td>
+                                <td>Amount</td>
+                            </tr>
+                            {% for b in balance %}
+                                <tr>
+                                    <td>{{ b.pair }}</td>
+                                    <td>{{ b.amount }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    <div class="col-md-12 col-lg-12">
+                        <div><h3>Create Order</h3></div>
+                        <form action="{% url 'create_monitor_order' %}" method="get">
+                            <div class="row">
+                                <input class="form-control" type="text" name="pair" placeholder="PAIR" required>
+                            </div>
+                            <div class="row">
+                                <input class="form-control" name="amount" placeholder="AMOUNT" required>
+                            </div>
+                            <div class="row">
+                                <input class="form-control" name="price" placeholder="PRICE" required>
+                            </div>
+                            <div class="row">
+                                <select class="form-control" type="number" name="side" required>
+                                    <option disabled selected>SIDE</option>
+                                    <option value="buy">BUY</option>
+                                    <option value="sell">SELL</option>
+                                </select>
+                            </div>
+                            <div class="row">
+                                <input name="submit" type="submit" value="Submit">
+                            </div>
+                        </form>
+                    </div>
+            </div>
+        </div>
+
+{% endblock %}

@@ -1,0 +1,27 @@
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<div id="liquidity_chart" style="width: 100%; height: 500px;"></div>
+
+<script type="text/javascript">
+    google.charts.load('current', {packages: ['corechart', 'line']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+            ['Date', 'Liquidity'],
+            {% for a in liquidity_chart %}
+                [ '{{ a.date }}', {{ a.value }}],
+            {% endfor %}
+        ]);
+
+        var options = {
+            title: 'Liquidity',
+            legend: { position: 'bottom' },
+            slantedText:true,
+            slantedTextAngle:45,
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('liquidity_chart'));
+
+        chart.draw(data, options);
+    }
+</script>

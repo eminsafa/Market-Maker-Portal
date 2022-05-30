@@ -1,0 +1,28 @@
+<table class="table table-centered table-nowrap mb-4 rounded table-striped table-hover">
+    <thead class="thead-light">
+    <tr>
+        <th class="border-0">Date</th>
+        <th class="border-0">Status</th>
+        <th class="border-0">Pair</th>
+        <th class="border-0">Type</th>
+        <th class="border-0">Price</th>
+        <th class="border-0">Amount</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Item -->
+    {% for o in orders %}
+        <tr>
+            <td class="border-0">{{ o.datetime }}</td>
+            <td class="border-0 text-{{ o.status_style }}">{{ o.status }}</td>
+            <td class="border-0 font-weight-bold"><b>{{ o.pair }}</b></td>
+            <td class="border-0 text-{{ o.side_style }}">{{ o.side }}</td>
+            <td class="border-0 font-weight-bold">{{ o.price }}</td>
+            <td class="border-0">{{ o.amount }}</td>
+        </tr>
+
+    {% endfor %}
+
+    <!-- End of Item -->
+    </tbody>
+</table>
